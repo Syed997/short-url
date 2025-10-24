@@ -1,10 +1,11 @@
 from flask import Flask
 from app.blueprints.url.routes import url_bp
 from config import DevConfig
-from flask_sqlalchemy import SQLAlchemy
+# from flask_sqlalchemy import SQLAlchemy
+from app.extensions import db
 
 
-db = SQLAlchemy()
+# db = SQLAlchemy()
 
 
 def create_app(config_class=DevConfig):
@@ -12,7 +13,7 @@ def create_app(config_class=DevConfig):
     app.config.from_object(config_class)
     db.init_app(app)
 
-    app.register_blueprint(url_bp, url_prefix='/api')
+    app.register_blueprint(url_bp, url_prefix='/api/url')
 
 
 

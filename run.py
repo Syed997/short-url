@@ -11,7 +11,7 @@ if __name__ == '__main__':
             
         except Exception as e:
             print("❌ DB connection failed:", e)
-
+        db.drop_all()
         db.create_all()
 
     app.run(debug=True)

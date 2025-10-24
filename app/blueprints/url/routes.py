@@ -1,22 +1,28 @@
 from flask import Blueprint, request, jsonify
+from app.models.url_model import URL
+from app.extensions import db
 
 
 url_bp = Blueprint('url_bp', __name__)
 
 
-@url_bp.route('/shorter', methods=['POST'])
+@url_bp.route('/add', methods=['POST'])
 def url_shorter():
-    data = request.get_json()
+    data=request.get_json()
 
-    if not data:
-        return jsonify({"error": "no data found."}), 400
+    url = data.get('url')
+    short_url = data.get('short_url')
+
+    if not url or not short_url:
+        return jsonify({"error": "url and short url are required!"}), 400
     
-    url = data.get("url")
-    short_url = data.get("short_url")
+    new_url = URL(url=url , short_url=short_url)
+    db.session.add(new_url)
+    db.session.commit()
+    return jsonify({"message":"short url added successfully", "id": new_url.id}), 201
 
-    return jsonify({
-        "message": "data received.",
-        "data": {
-            "short_url" : short_url
-        }
-    })
+@url_bp.route('/list')
+def get_url():
+    urls = URL.query.all()
+    results = [{"id":u.id, "url": u.url, "short_url": u.short_url }for u in urls]
+    return jsonify(results), 200
